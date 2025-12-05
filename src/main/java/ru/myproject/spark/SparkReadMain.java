@@ -1,6 +1,5 @@
 package ru.myproject.spark;
 
-import ru.myproject.config.KafkaPropertiesDestination;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -11,14 +10,16 @@ import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 import org.apache.spark.sql.functions;
+import ru.myproject.config.KafkaPropertiesDestination;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
 public class SparkReadMain {
+
     public static void main(String[] args) {
+
         Properties props = KafkaPropertiesDestination.getConfig();
         String appName = System.getProperty("spark.app.name", "SparkReadHdfsExample");
         String master = System.getProperty("spark.master", "local[*]");
@@ -26,7 +27,6 @@ public class SparkReadMain {
         String kafkaBootstrapServers = System.getProperty("kafka.bootstrap.servers", props.getProperty("bootstrap.servers"));
         String outputTopic = System.getProperty("kafka.output.topic", props.getProperty("topic_data_analysis"));
 
-        // Создаем SparkSession с единой конфигурацией
         SparkSession spark = SparkSession.builder()
                 .appName(appName)
                 .master(master)
@@ -34,23 +34,17 @@ public class SparkReadMain {
                 .config("spark.hadoop.mapreduce.input.fileinputformat.input.dir.recursive", "true")
                 .config("spark.sql.adaptive.enabled", "true")
                 .config("spark.sql.adaptive.coalescePartitions.enabled", "true")
-                // Дополнительные настройки для работы с HDFS
                 .config("spark.hadoop.dfs.client.use.datanode.hostname", "true")
                 .config("spark.hadoop.dfs.datanode.use.datanode.hostname", "true")
                 .config("spark.hadoop.fs.hdfs.impl", "org.apache.hadoop.hdfs.DistributedFileSystem")
-                // Настройки таймаутов
                 .config("spark.hadoop.dfs.client.socket-timeout", "60000")
                 .config("spark.hadoop.dfs.datanode.socket.write.timeout", "60000")
                 .config("spark.hadoop.ipc.client.connect.timeout", "60000")
-                // Настройки Kafka
                 .config("spark.sql.streaming.checkpointLocation", "/tmp/checkpoint")
                 .getOrCreate();
 
         try {
-            // Получаем SparkContext из SparkSession
             JavaSparkContext sc = new JavaSparkContext(spark.sparkContext());
-
-            // Устанавливаем конфигурацию Hadoop
             sc.hadoopConfiguration().set("fs.defaultFS", "hdfs://127.0.0.1:9000");
             sc.hadoopConfiguration().set("mapreduce.input.fileinputformat.input.dir.recursive", "true");
             sc.hadoopConfiguration().set("dfs.client.use.datanode.hostname", "true");
@@ -64,23 +58,16 @@ public class SparkReadMain {
             System.out.println("Output Topic: " + outputTopic);
             System.out.println("Default FS: " + sc.hadoopConfiguration().get("fs.defaultFS"));
 
-            // Чтение JSON данных из HDFS
             System.out.println("Начинаем чтение JSON данных из HDFS...");
-
-            // Определяем схему для JSON данных
             Dataset<Row> df = spark.read()
                     .option("multiline", true)
                     .json(inputPath);
 
             System.out.println("Схема исходных данных:");
             df.printSchema();
-
             System.out.println("Количество строк в DataFrame: " + df.count());
-
             System.out.println("Первые 20 строк исходных данных:");
             df.show(20, false);
-
-            // Анализ данных: количество товаров по brand и category
             System.out.println("Выполняем анализ данных...");
 
             Dataset<Row> analysisResult = df
@@ -105,11 +92,8 @@ public class SparkReadMain {
                     .collect(Collectors.joining("\n"));
 
             System.out.println("Данные для отправки в Kafka: " + resultString);
-
-            // Записываем результаты анализа в топик Kafka
             System.out.println("Отправляем данные в топик Kafka: " + outputTopic);
 
-            // Отправляем сообщение в Kafka
             String dateTime = LocalDateTime.now().toString();
             ProducerRecord<String, String> record = new ProducerRecord<>(outputTopic, dateTime, resultString);
             try (KafkaProducer<String, String> producer = new KafkaProducer<>(props)) {
@@ -126,13 +110,11 @@ public class SparkReadMain {
 
             System.out.println("Данные успешно отправлены в Kafka топик: " + outputTopic);
 
-            // Дополнительная статистика
             System.out.println("\n=== СТАТИСТИКА АНАЛИЗА ===");
             System.out.println("Общее количество брендов: " + analysisResult.select("brand").distinct().count());
             System.out.println("Общее количество категорий: " + analysisResult.select("category").distinct().count());
             System.out.println("Общее количество товаров: " + analysisResult.agg(functions.sum("product_count")).first().getLong(0));
 
-            // Показываем топ-5 комбинаций бренд-категория
             System.out.println("\nТоп-5 комбинаций бренд-категория:");
             analysisResult.limit(5).show(false);
 
@@ -140,10 +122,8 @@ public class SparkReadMain {
             System.err.println("Ошибка при выполнении Spark job:");
             e.printStackTrace();
         } finally {
-            // Останавливаем SparkSession (автоматически останавливает и SparkContext)
             spark.stop();
             System.out.println("Spark приложение завершено.");
         }
     }
 }
-

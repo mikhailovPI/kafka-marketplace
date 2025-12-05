@@ -29,11 +29,8 @@ public class ClientRequest {
     private static KafkaProducer<String, String> kafkaProducer;
 
     public static void main(String[] args) {
-        // Initialize long-lived resources ONCE, outside the loop
         try (Scanner scanner = new Scanner(System.in)) {
             initializeKafkaProducer(); // Initialize Kafka producer once
-
-            // Main program loop
             while (true) {
                 try {
                     System.out.print("Введите название товара для поиска (или 'exit' для выхода): ");
@@ -41,33 +38,23 @@ public class ClientRequest {
 
                     if ("exit".equalsIgnoreCase(productName)) {
                         System.out.println("Завершение работы...");
-                        break; // Exit the loop
+                        break;
                     }
 
                     if (productName.isEmpty()) {
                         System.err.println("Ошибка: название товара не может быть пустым");
-                        continue; // Skip to next iteration
+                        continue;
                     }
-
-                    // Read and parse products
                     List<Product> products = readProductsFromFile(FILE_STORE);
 
-                    // Find product by name
                     Product foundProduct = findProductByName(products, productName);
 
                     if (foundProduct != null) {
-                        // Log user query
                         logUserQuery(productName, foundProduct.getProductId());
-
-                        // Send response with product ID, name and category
                         sendProductResponse(foundProduct);
-
-                        // Send recommendations
                         sendRecommendations(products, foundProduct);
-
                         System.out.println("Товар найден: " + foundProduct.getName());
                         System.out.println("ID товара: " + foundProduct.getProductId());
-                        // Небольшая пауза для удобства чтения
                         Thread.sleep(500);
                     } else {
                         logUserQuery(productName, null);
@@ -75,21 +62,17 @@ public class ClientRequest {
                     }
 
                 } catch (Exception e) {
-                    // This catches errors for a single search operation, not critical failures
                     System.err.println("Ошибка при обработке запроса: " + e.getMessage());
                     e.printStackTrace();
                 }
             }
         } catch (Exception e) {
-            // This catches critical errors during initial setup
             System.err.println("Критическая ошибка при запуске приложения: " + e.getMessage());
         } finally {
-            // Close resources ONLY ONCE, when the entire program is finished
             if (kafkaProducer != null) {
                 kafkaProducer.close(); // :cite[3]
                 System.out.println("Kafka producer закрыт.");
             }
-            // Scanner is closed only here, after the loop ends
             System.out.println("Сканнер закрыт.");
         }
     }
@@ -127,7 +110,6 @@ public class ClientRequest {
         Product product = new Product();
         Map<String, String> fields = parseKeyValuePairs(content);
 
-        // Заполняем поля продукта
         product.setStoreId(fields.get("store_id"));
         product.setDescription(fields.get("description"));
         product.setCreatedAt(parseDateTime(fields.get("created_at")));
@@ -140,7 +122,6 @@ public class ClientRequest {
         product.setSku(fields.get("sku"));
         product.setBrand(fields.get("brand"));
 
-        // Обрабатываем вложенные объекты
         product.setImages(parseImages(fields.get("images")));
         product.setSpecifications(parseSpecifications(fields.get("specifications")));
         product.setPrice(parsePrice(fields.get("price")));
@@ -166,7 +147,6 @@ public class ClientRequest {
             if (c == ']') bracketLevel--;
 
             if (c == ',' && braceLevel == 0 && bracketLevel == 0) {
-                // Завершаем текущую пару ключ-значение
                 if (currentKey.length() > 0 && currentValue.length() > 0) {
                     result.put(currentKey.toString().trim(), currentValue.toString().trim());
                 }
@@ -188,7 +168,6 @@ public class ClientRequest {
             }
         }
 
-        // Добавляем последнюю пару
         if (currentKey.length() > 0 && currentValue.length() > 0) {
             result.put(currentKey.toString().trim(), currentValue.toString().trim());
         }
@@ -202,7 +181,6 @@ public class ClientRequest {
             return images;
         }
 
-        // Убираем обрамляющие []
         String content = imagesString.substring(1, imagesString.length() - 1).trim();
         List<String> imageStrings = splitByComma(content, '{', '}');
 
@@ -263,7 +241,6 @@ public class ClientRequest {
             return result;
         }
 
-        // Убираем обрамляющие []
         String content = listString.substring(1, listString.length() - 1).trim();
         String[] items = content.split(", ");
         for (String item : items) {
@@ -280,7 +257,6 @@ public class ClientRequest {
         return ZonedDateTime.parse(cleanString).toLocalDateTime();
     }
 
-    // Вспомогательный метод для разделения с учетом вложенных структур
     private static List<String> splitByComma(String content, char openChar, char closeChar) {
         List<String> result = new ArrayList<>();
         int level = 0;
@@ -306,7 +282,6 @@ public class ClientRequest {
         kafkaProducer = new KafkaProducer<>(props);
     }
 
-    // Find product by name (case-insensitive partial match)
     private static Product findProductByName(List<Product> products, String productName) {
         return products.stream()
                 .filter(p -> p.getName() != null &&
@@ -315,7 +290,6 @@ public class ClientRequest {
                 .orElse(null);
     }
 
-    // Modified user query logging
     private static void logUserQuery(String productName, String productId) throws IOException {
         Map<String, Object> queryLog = new HashMap<>();
         queryLog.put("timestamp", LocalDateTime.now().toString());
@@ -335,7 +309,6 @@ public class ClientRequest {
         });
     }
 
-    // Send product response to response topic
     private static void sendProductResponse(Product product) throws IOException {
         Map<String, String> responseData = new HashMap<>();
         responseData.put("id", product.getProductId());
@@ -357,7 +330,6 @@ public class ClientRequest {
         kafkaProducer.flush();
     }
 
-    // Send recommendations to recommendations topic
     private static void sendRecommendations(List<Product> products, Product foundProduct) throws IOException {
         LocalDateTime oneYearAgo = LocalDateTime.now().minus(YEARS_LAST, ChronoUnit.YEARS);
 

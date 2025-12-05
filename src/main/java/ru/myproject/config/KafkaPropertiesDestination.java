@@ -1,12 +1,12 @@
 package ru.myproject.config;
 
 import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.common.config.SslConfigs;
 import org.apache.kafka.streams.StreamsConfig;
 
 import java.util.Properties;
 
 public class KafkaPropertiesDestination {
+
     public static Properties getConfig() {
         Properties props = new Properties();
         props.put(StreamsConfig.APPLICATION_ID_CONFIG, "data-analysis");

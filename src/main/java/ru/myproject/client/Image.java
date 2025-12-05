@@ -20,4 +20,3 @@ public class Image {
         this.alt = alt;
     }
 }
-

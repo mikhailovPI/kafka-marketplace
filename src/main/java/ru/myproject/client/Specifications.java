@@ -1,6 +1,7 @@
 package ru.myproject.client;
 
 public class Specifications {
+
     private String weight;
     private String dimensions;
     private String batteryLife;
@@ -38,4 +39,3 @@ public class Specifications {
         this.waterResistance = waterResistance;
     }
 }
-

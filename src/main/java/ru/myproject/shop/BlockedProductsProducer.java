@@ -22,17 +22,12 @@ public class BlockedProductsProducer {
 
             String line;
             while ((line = reader.readLine()) != null) {
-                // Очищаем строку от пробелов и запятых
                 String productId = line.trim().replace(",", "").replace(" ", "");
 
                 if (!productId.isEmpty()) {
-                    // Создаем JSON сообщение
                     String jsonMessage = String.format("{\"product_id\": \"%s\"}", productId);
-
-                    // Отправляем сообщение в Kafka (синхронно для надежности)
                     ProducerRecord<String, String> record =
                             new ProducerRecord<>(KafkaProperties.TOPIC_BLOCKED_PRODUCTS, productId, jsonMessage);
-
                     try {
                         producer.send(record).get(); // Ждем подтверждения
                         System.out.println("Successfully sent blocked product: " + productId);
@@ -50,4 +45,3 @@ public class BlockedProductsProducer {
         }
     }
 }
-

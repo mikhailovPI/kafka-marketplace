@@ -25,10 +25,7 @@ public class ProductFilterStream {
     private static final Set<String> blockedProductIds = new HashSet<>();
 
     public static void main(String[] args) {
-        // Сначала читаем и отправляем данные из файла в Kafka
         sendJsonFileToKafka("data/products.json");
-
-        // Затем запускаем Streams обработку
         startStreamsProcessing();
     }
 
@@ -37,15 +34,11 @@ public class ProductFilterStream {
 
         try (KafkaProducer<String, String> producer = new KafkaProducer<>(props)) {
             String content = new String(Files.readAllBytes(Paths.get(filename)));
-
-            // Парсим JSON массив
             JsonNode productsArray = mapper.readTree(content);
-
             if (productsArray.isArray()) {
                 for (JsonNode product : productsArray) {
                     String productJson = product.toString();
                     String productId = product.get("product_id").asText();
-
                     ProducerRecord<String, String> record =
                             new ProducerRecord<>(KafkaProperties.TOPIC_INPUT_JSON_STREAM, productId, productJson);
 
@@ -73,8 +66,6 @@ public class ProductFilterStream {
         props.put(StreamsConfig.APPLICATION_ID_CONFIG, "product-filter-app");
 
         StreamsBuilder builder = new StreamsBuilder();
-
-        // Подписываемся на топик с заблокированными продуктами
         builder.stream(KafkaProperties.TOPIC_BLOCKED_PRODUCTS,
                         Consumed.with(Serdes.String(), Serdes.String()))
                 .foreach((key, value) -> {
@@ -90,8 +81,6 @@ public class ProductFilterStream {
                         System.err.println("Error parsing blocked product JSON: " + e.getMessage());
                     }
                 });
-
-        // Обрабатываем основной поток продуктов
         builder.stream(KafkaProperties.TOPIC_INPUT_JSON_STREAM,
                         Consumed.with(Serdes.String(), Serdes.String()))
                 .filter((key, value) -> {
@@ -128,7 +117,6 @@ public class ProductFilterStream {
 
         final CountDownLatch latch = new CountDownLatch(1);
 
-        // Добавляем обработчик завершения работы
         Runtime.getRuntime().addShutdownHook(new Thread("product-filter-shutdown-hook") {
             @Override
             public void run() {
@@ -149,4 +137,3 @@ public class ProductFilterStream {
         }
     }
 }
-

@@ -1,6 +1,7 @@
 package ru.myproject.client;
 
 public class Stock {
+
     private int available;
     private int reserved;
 
@@ -20,4 +21,3 @@ public class Stock {
         this.reserved = reserved;
     }
 }
-

@@ -38,7 +38,6 @@ public class Product {
     @JsonProperty("store_id")
     private String storeId;
 
-    // Геттеры и сеттеры
     public String getProductId() { return productId; }
     public void setProductId(String productId) { this.productId = productId; }
 
