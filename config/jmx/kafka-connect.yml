@@ -1,0 +1,32 @@
+# config/jmx/kafka-connect.yml (упрощенный)
+lowercaseOutputName: true
+lowercaseOutputLabelNames: true
+
+rules:
+  # Сбор всех метрик Kafka Connect
+  - pattern: "kafka.connect.<type=(.+), connector=(.+), task=(.+)><>(.+): (.+)"
+    name: "kafka_connect_$1_$4"
+    labels:
+      connector: "$2"
+      task: "$3"
+    help: "Kafka Connect $1 $4"
+    type: GAUGE
+
+  - pattern: "kafka.connect.<type=(.+), connector=(.+)><>(.+): (.+)"
+    name: "kafka_connect_$1_$3"
+    labels:
+      connector: "$2"
+    help: "Kafka Connect $1 $3"
+    type: GAUGE
+
+  - pattern: "kafka.connect.<type=(.+)><>(.+): (.+)"
+    name: "kafka_connect_$1_$2"
+    help: "Kafka Connect $1 $2"
+    type: GAUGE
+
+  # Базовые JVM метрики
+  - pattern: "java.lang<type=Memory><>(.*):"
+    name: "jvm_memory_$1"
+    help: "JVM Memory $1"
+
+  - pattern: ".*"

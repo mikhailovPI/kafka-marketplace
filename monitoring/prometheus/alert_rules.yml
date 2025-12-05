@@ -1,0 +1,43 @@
+groups:
+  - name: kafka_connect_alerts
+    interval: 30s
+    rules:
+      - alert: KafkaConnectDown
+        expr: up{job="kafka-connect"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Kafka Connect недоступен"
+          description: "Kafka Connect не отвечает более 1 минуты"
+
+      - alert: KafkaConnectTaskFailure
+        expr: kafka_connect_connector_task_status{status="FAILED"} > 0
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Ошибка задачи Kafka Connect"
+          description: "Задача коннектора {{ $labels.connector }} в статусе FAILED"
+
+      - alert: KafkaConnectHighErrorRate
+        expr: rate(kafka_connect_connector_task_metrics_sink_record_write_total{status="FAILED"}[5m]) > 10
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Высокий уровень ошибок в Kafka Connect"
+          description: "Более 10 ошибок в секунду в коннекторе {{ $labels.connector }}"
+
+  - name: prometheus_alerts
+    interval: 30s
+    rules:
+      - alert: PrometheusTargetDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Цель мониторинга недоступна"
+          description: "Цель {{ $labels.job }} недоступна более 1 минуты"
+

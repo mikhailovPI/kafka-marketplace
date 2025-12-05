@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<configuration>
+  <property>
+    <name>fs.defaultFS</name>
+    <value>hdfs://hadoop-namenode:9000</value>
+  </property>
+  <!-- Критически важные настройки для Docker -->
+  <property>
+    <name>dfs.client.use.datanode.hostname</name>
+    <value>true</value>
+    <description>Use hostnames instead of IPs for DataNode communication</description>
+  </property>
+
+  <property>
+    <name>dfs.datanode.use.datanode.hostname</name>
+    <value>true</value>
+    <description>DataNodes should use hostnames in reporting to NameNode</description>
+  </property>
+</configuration>

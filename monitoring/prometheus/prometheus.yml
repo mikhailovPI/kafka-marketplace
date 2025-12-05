@@ -1,0 +1,26 @@
+global:
+  scrape_interval: 15s      # Как часто собирать метрики
+  evaluation_interval: 15s  # Как часто оценивать правила оповещений
+
+# Конфигурация Alertmanager
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          - alertmanager:9093
+
+# Правила алертов
+rule_files:
+  - '/etc/prometheus/alert_rules.yml'
+
+scrape_configs:
+  # Мониторинг самого Prometheus
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Мониторинг Kafka Connect - ВАЖНО: используем порт 9876
+  - job_name: 'kafka-connect'
+    scrape_interval: 10s    # Более частый интервал для мониторинга Connect
+    static_configs:
+      - targets: ['kafka-connect:9876']  # Имя сервиса в Docker сети и порт JMX Exporter

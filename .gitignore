@@ -1,0 +1,79 @@
+# Compiled class files
+*.class
+
+# Log files
+*.log
+logs/
+
+# Package files
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# IDE
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# SSL Certificates and Keys (генерируются автоматически)
+credentials/*.key
+credentials/*.crt
+credentials/*.pem
+credentials/*.p12
+credentials/*.jks
+credentials/*.pkcs12
+credentials/*.csr
+credentials/*.srl
+credentials/kafka-*-creds/*.key
+credentials/kafka-*-creds/*.crt
+credentials/kafka-*-creds/*.p12
+credentials/kafka-*-creds/*.jks
+credentials/kafka-*-creds/*.pkcs12
+credentials/kafka-*-creds/*.csr
+credentials/kafka-*-creds/*_creds
+credentials/kafka-*-creds/*.keystore.*
+credentials/kafka-*-creds/*.truststore.*
+
+# CA файлы (не используются в упрощенном варианте)
+credentials/ca-key
+credentials/ca.cnf
+credentials/ca.crt
+credentials/ca.pem
+credentials/ca.srl
+credentials/ca.key
+
+# Но оставляем конфигурационные файлы
+!credentials/*.conf
+!credentials/*.properties
+!credentials/kafka-*-creds/*.cnf
+
+# Docker volumes
+.postgres-data/
+
+# Temporary files
+*.tmp
+*.temp
+

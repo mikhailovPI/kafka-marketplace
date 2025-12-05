@@ -1,0 +1,13 @@
+FROM confluentinc/cp-kafka-connect:7.7.1
+# Установка HDFS коннектора
+RUN #confluent-hub install --no-prompt confluentinc/kafka-connect-hdfs:latest
+
+# Установка JDBC коннектора
+#RUN confluent-hub install --no-prompt confluentinc/kafka-connect-jdbc:10.8.4
+
+# Копирование JMX Exporter
+COPY lib/jmx_prometheus_javaagent-0.15.0.jar /opt/
+COPY config/kafka-connect.yml /opt/
+
+# Создание директории для плагинов
+RUN mkdir -p /usr/share/confluent-hub-components

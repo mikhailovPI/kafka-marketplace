@@ -1,0 +1,508 @@
+[
+  {
+    "product_id": "12345",
+    "name": "Умные часы XYZ Pro",
+    "description": "Умные часы с расширенным мониторингом здоровья, GPS и уведомлениями. Новый дизайн.",
+    "price": {
+      "amount": 5999.99,
+      "currency": "RUB"
+    },
+    "category": "Электроника",
+    "brand": "XYZ",
+    "stock": {
+      "available": 85,
+      "reserved": 15
+    },
+    "sku": "XYZ-12345-PRO",
+    "tags": ["умные часы", "гаджеты", "технологии", "премиум"],
+    "images": [
+      {
+        "url": "https://example.com/images/product1_pro.jpg",
+        "alt": "Умные часы XYZ Pro - вид спереди"
+      }
+    ],
+    "specifications": {
+      "weight": "48g",
+      "dimensions": "44mm x 38mm x 9mm",
+      "battery_life": "36 hours",
+      "water_resistance": "IP68"
+    },
+    "created_at": "2023-11-01T10:00:00Z",
+    "updated_at": "2023-12-05T14:20:00Z",
+    "index": "products",
+    "store_id": "store_001"
+  },
+  {
+    "product_id": "12346",
+    "name": "Умные часы XYZ Pro детские",
+    "description": "Умные часы с расширенным мониторингом здоровья, GPS и уведомлениями. Новый дизайн.",
+    "price": {
+      "amount": 5999.99,
+      "currency": "RUB"
+    },
+    "category": "Электроника",
+    "brand": "XYZ",
+    "stock": {
+      "available": 85,
+      "reserved": 15
+    },
+    "sku": "XYZ-12345-PRO",
+    "tags": ["умные часы", "гаджеты", "технологии", "премиум"],
+    "images": [
+      {
+        "url": "https://example.com/images/product1_pro.jpg",
+        "alt": "Умные часы XYZ Pro - вид спереди"
+      }
+    ],
+    "specifications": {
+      "weight": "48g",
+      "dimensions": "44mm x 38mm x 9mm",
+      "battery_life": "36 hours",
+      "water_resistance": "IP68"
+    },
+    "created_at": "2023-11-01T10:00:00Z",
+    "updated_at": "2023-12-05T14:20:00Z",
+    "index": "products",
+    "store_id": "store_001"
+  },
+  {
+    "product_id": "12347",
+    "name": "Умные часы XYZ Pro для дайвинга",
+    "description": "Умные часы с расширенным мониторингом здоровья, GPS и уведомлениями. Новый дизайн.",
+    "price": {
+      "amount": 5999.99,
+      "currency": "RUB"
+    },
+    "category": "Электроника",
+    "brand": "XYZ",
+    "stock": {
+      "available": 85,
+      "reserved": 15
+    },
+    "sku": "XYZ-12345-PRO",
+    "tags": ["умные часы", "гаджеты", "технологии", "премиум"],
+    "images": [
+      {
+        "url": "https://example.com/images/product1_pro.jpg",
+        "alt": "Умные часы XYZ Pro - вид спереди"
+      }
+    ],
+    "specifications": {
+      "weight": "48g",
+      "dimensions": "44mm x 38mm x 9mm",
+      "battery_life": "36 hours",
+      "water_resistance": "IP68"
+    },
+    "created_at": "2023-11-01T10:00:00Z",
+    "updated_at": "2023-12-05T14:20:00Z",
+    "index": "products",
+    "store_id": "store_001"
+  },
+  {
+    "product_id": "67890",
+    "name": "Беспроводные наушники SoundMax",
+    "description": "Наушники с шумоподавлением и чистым звуком. До 30 часов работы.",
+    "price": {
+      "amount": 3499.99,
+      "currency": "RUB"
+    },
+    "category": "Аудио",
+    "brand": "SoundMax",
+    "stock": {
+      "available": 200,
+      "reserved": 45
+    },
+    "sku": "SM-67890",
+    "tags": ["наушники", "беспроводные", "аудио", "технологии"],
+    "images": [
+      {
+        "url": "https://example.com/images/headphones_black.jpg",
+        "alt": "Наушники SoundMax черные"
+      }
+    ],
+    "specifications": {
+      "weight": "250g",
+      "battery_life": "30 hours",
+      "bluetooth": "5.2",
+      "noise_cancellation": "активное"
+    },
+    "created_at": "2023-09-15T08:30:00Z",
+    "updated_at": "2023-11-20T16:45:00Z",
+    "index": "products",
+    "store_id": "store_001"
+  },
+  {
+    "product_id": "24680",
+    "name": "Смартфон Galaxy A54",
+    "description": "Смартфон с AMOLED дисплеем, мощным процессором и камерой 48 Мп.",
+    "price": {
+      "amount": 29999.99,
+      "currency": "RUB"
+    },
+    "category": "Смартфоны",
+    "brand": "Samsung",
+    "stock": {
+      "available": 75,
+      "reserved": 25
+    },
+    "sku": "SM-A546BL",
+    "tags": ["смартфон", "android", "камера", "мобильный"],
+    "images": [
+      {
+        "url": "https://example.com/images/a54_black.jpg",
+        "alt": "Samsung Galaxy A54 черный"
+      }
+    ],
+    "specifications": {
+      "screen": "6.4\" AMOLED",
+      "storage": "128GB",
+      "ram": "6GB",
+      "camera": "48MP+12MP+5MP",
+      "battery": "5000mAh"
+    },
+    "created_at": "2023-10-10T09:15:00Z",
+    "updated_at": "2023-12-01T11:30:00Z",
+    "index": "products",
+    "store_id": "store_001"
+  },
+  {
+    "product_id": "13579",
+    "name": "Ноутбук UltraBook 15",
+    "description": "Легкий и мощный ноутбук для работы и развлечений. SSD 512GB.",
+    "price": {
+      "amount": 89999.99,
+      "currency": "RUB"
+    },
+    "category": "Ноутбуки",
+    "brand": "Lenovo",
+    "stock": {
+      "available": 30,
+      "reserved": 8
+    },
+    "sku": "LEN-ULTRA15",
+    "tags": ["ноутбук", "ультрабук", "работа", "игры"],
+    "images": [
+      {
+        "url": "https://example.com/images/ultrabook_silver.jpg",
+        "alt": "Ноутбук UltraBook 15 серебристый"
+      }
+    ],
+    "specifications": {
+      "screen": "15.6\" FHD",
+      "processor": "Intel i7-1165G7",
+      "ram": "16GB",
+      "storage": "512GB SSD",
+      "weight": "1.5kg"
+    },
+    "created_at": "2023-08-20T14:20:00Z",
+    "updated_at": "2023-11-25T13:15:00Z",
+    "index": "products",
+    "store_id": "store_001"
+  },
+  {
+    "product_id": "11223",
+    "name": "Умная колонка Echo Dot",
+    "description": "Компактная умная колонка с голосовым помощником Alexa.",
+    "price": {
+      "amount": 2499.99,
+      "currency": "RUB"
+    },
+    "category": "Умный дом",
+    "brand": "Amazon",
+    "stock": {
+      "available": 150,
+      "reserved": 30
+    },
+    "sku": "ECHO-DOT-5",
+    "tags": ["колонка", "умный дом", "alexa", "аудио"],
+    "images": [
+      {
+        "url": "https://example.com/images/echo_dot_blue.jpg",
+        "alt": "Умная колонка Echo Dot синяя"
+      }
+    ],
+    "specifications": {
+      "diameter": "100mm",
+      "height": "89mm",
+      "weight": "341g",
+      "bluetooth": "5.0",
+      "wifi": "802.11a/b/g/n/ac"
+    },
+    "created_at": "2023-07-12T11:45:00Z",
+    "updated_at": "2023-10-30T10:20:00Z",
+    "index": "products",
+    "store_id": "store_001"
+  },
+  {
+    "product_id": "44556",
+    "name": "Фитнес-браслет FitPro",
+    "description": "Трекер активности с мониторингом сна и пульса. Водонепроницаемый.",
+    "price": {
+      "amount": 1999.99,
+      "currency": "RUB"
+    },
+    "category": "Фитнес",
+    "brand": "Xiaomi",
+    "stock": {
+      "available": 300,
+      "reserved": 60
+    },
+    "sku": "XM-FITPRO-7",
+    "tags": ["фитнес", "трекер", "здоровье", "спорт"],
+    "images": [
+      {
+        "url": "https://example.com/images/fitpro_black.jpg",
+        "alt": "Фитнес-браслет FitPro черный"
+      }
+    ],
+    "specifications": {
+      "screen": "1.47\" AMOLED",
+      "battery_life": "14 дней",
+      "water_resistance": "5ATM",
+      "heart_rate": "да",
+      "sleep_tracking": "да"
+    },
+    "created_at": "2023-09-05T13:30:00Z",
+    "updated_at": "2023-12-03T09:45:00Z",
+    "index": "products",
+    "store_id": "store_001"
+  },
+  {
+    "product_id": "77889",
+    "name": "Игровая мышь Razer Viper",
+    "description": "Легкая игровая мышь с оптическим сенсором 20K DPI.",
+    "price": {
+      "amount": 4999.99,
+      "currency": "RUB"
+    },
+    "category": "Гейминг",
+    "brand": "Razer",
+    "stock": {
+      "available": 90,
+      "reserved": 20
+    },
+    "sku": "RZR-VIPER-ULT",
+    "tags": ["мышь", "игровая", "гейминг", "razer"],
+    "images": [
+      {
+        "url": "https://example.com/images/viper_black.jpg",
+        "alt": "Игровая мышь Razer Viper"
+      }
+    ],
+    "specifications": {
+      "dpi": "20000",
+      "buttons": "8",
+      "weight": "74g",
+      "connection": "USB-C",
+      "rgb_lighting": "да"
+    },
+    "created_at": "2023-10-25T15:40:00Z",
+    "updated_at": "2023-12-02T12:30:00Z",
+    "index": "products",
+    "store_id": "store_001"
+  },
+  {
+    "product_id": "33445",
+    "name": "Электрическая зубная щетка Oral-B",
+    "description": "Зубная щетка с технологией 3D чистки и таймером.",
+    "price": {
+      "amount": 3999.99,
+      "currency": "RUB"
+    },
+    "category": "Здоровье",
+    "brand": "Oral-B",
+    "stock": {
+      "available": 180,
+      "reserved": 40
+    },
+    "sku": "ORAL-B-PRO-1000",
+    "tags": ["зубная щетка", "здоровье", "гигиена", "электрическая"],
+    "images": [
+      {
+        "url": "https://example.com/images/oralb_white.jpg",
+        "alt": "Электрическая зубная щетка Oral-B"
+      }
+    ],
+    "specifications": {
+      "modes": "3",
+      "battery_life": "10 дней",
+      "charging": "индукционная",
+      "pressure_sensor": "да",
+      "timer": "2 минуты"
+    },
+    "created_at": "2023-08-15T10:20:00Z",
+    "updated_at": "2023-11-18T14:15:00Z",
+    "index": "products",
+    "store_id": "store_001"
+  },
+  {
+    "product_id": "66778",
+    "name": "Внешний аккумулятор 20000mAh",
+    "description": "Мощный пауэрбанк с быстрой зарядкой и двумя USB портами.",
+    "price": {
+      "amount": 2499.99,
+      "currency": "RUB"
+    },
+    "category": "Аксессуары",
+    "brand": "Anker",
+    "stock": {
+      "available": 250,
+      "reserved": 50
+    },
+    "sku": "ANK-POWER-20000",
+    "tags": ["пауэрбанк", "аккумулятор", "зарядка", "мобильный"],
+    "images": [
+      {
+        "url": "https://example.com/images/powerbank_black.jpg",
+        "alt": "Внешний аккумулятор Anker 20000mAh"
+      }
+    ],
+    "specifications": {
+      "capacity": "20000mAh",
+      "output": "18W",
+      "ports": "2x USB-A, 1x USB-C",
+      "weight": "345g",
+      "fast_charging": "да"
+    },
+    "created_at": "2023-07-30T12:10:00Z",
+    "updated_at": "2023-11-22T16:40:00Z",
+    "index": "products",
+    "store_id": "store_001"
+  },
+  {
+    "product_id": "99001",
+    "name": "Кофемашина DeLonghi",
+    "description": "Автоматическая кофемашина для приготовления эспрессо и капучино.",
+    "price": {
+      "amount": 29999.99,
+      "currency": "RUB"
+    },
+    "category": "Бытовая техника",
+    "brand": "DeLonghi",
+    "stock": {
+      "available": 25,
+      "reserved": 5
+    },
+    "sku": "DEL-ECAM-22",
+    "tags": ["кофемашина", "кофе", "кухня", "техника"],
+    "images": [
+      {
+        "url": "https://example.com/images/coffee_machine_silver.jpg",
+        "alt": "Кофемашина DeLonghi серебристая"
+      }
+    ],
+    "specifications": {
+      "power": "1450W",
+      "water_tank": "1.8L",
+      "bean_container": "250g",
+      "dimensions": "34x24x43cm",
+      "weight": "9.2kg"
+    },
+    "created_at": "2023-09-28T14:50:00Z",
+    "updated_at": "2023-12-04T10:25:00Z",
+    "index": "products",
+    "store_id": "store_001"
+  },
+  {
+    "product_id": "22334",
+    "name": "Беспроводной пылесос Dyson",
+    "description": "Мощный беспроводной пылесос с технологией циклонной очистки.",
+    "price": {
+      "amount": 39999.99,
+      "currency": "RUB"
+    },
+    "category": "Бытовая техника",
+    "brand": "Dyson",
+    "stock": {
+      "available": 40,
+      "reserved": 10
+    },
+    "sku": "DYS-V11-ABS",
+    "tags": ["пылесос", "беспроводной", "уборка", "техника"],
+    "images": [
+      {
+        "url": "https://example.com/images/dyson_red.jpg",
+        "alt": "Беспроводной пылесос Dyson красный"
+      }
+    ],
+    "specifications": {
+      "battery_life": "60 мин",
+      "suction_power": "185AW",
+      "dust_bin": "0.76L",
+      "weight": "2.9kg",
+      "filtration": "HEPA"
+    },
+    "created_at": "2023-10-15T11:30:00Z",
+    "updated_at": "2023-12-01T15:20:00Z",
+    "index": "products",
+    "store_id": "store_001"
+  },
+  {
+    "product_id": "55667",
+    "name": "Умные весы Body+",
+    "description": "Весы с анализом состава тела и синхронизацией со смартфоном.",
+    "price": {
+      "amount": 3499.99,
+      "currency": "RUB"
+    },
+    "category": "Фитнес",
+    "brand": "Withings",
+    "stock": {
+      "available": 120,
+      "reserved": 25
+    },
+    "sku": "WITH-BODY-PLUS",
+    "tags": ["весы", "умные", "фитнес", "здоровье"],
+    "images": [
+      {
+        "url": "https://example.com/images/scales_white.jpg",
+        "alt": "Умные весы Body+ белые"
+      }
+    ],
+    "specifications": {
+      "max_weight": "180kg",
+      "measurements": "13 параметров",
+      "bluetooth": "4.0",
+      "wifi": "да",
+      "battery": "18 месяцев"
+    },
+    "created_at": "2023-08-08T09:45:00Z",
+    "updated_at": "2023-11-28T13:50:00Z",
+    "index": "products",
+    "store_id": "store_001"
+  },
+  {
+    "product_id": "88990",
+    "name": "Игровая клавиатура Logitech",
+    "description": "Механическая клавиатура с RGB подсветкой и программируемыми клавишами.",
+    "price": {
+      "amount": 7999.99,
+      "currency": "RUB"
+    },
+    "category": "Гейминг",
+    "brand": "Logitech",
+    "stock": {
+      "available": 65,
+      "reserved": 15
+    },
+    "sku": "LOG-G915-TKL",
+    "tags": ["клавиатура", "игровая", "механическая", "гейминг"],
+    "images": [
+      {
+        "url": "https://example.com/images/keyboard_black.jpg",
+        "alt": "Игровая клавиатура Logitech черная"
+      }
+    ],
+    "specifications": {
+      "switch_type": "GL Tactile",
+      "backlight": "RGB",
+      "connection": "Bluetooth/Lightspeed",
+      "battery_life": "40 часов",
+      "weight": "810g"
+    },
+    "created_at": "2023-10-05T16:25:00Z",
+    "updated_at": "2023-12-28T13:50:00Z",
+    "index": "products",
+    "store_id": "store_001"
+  }
+]
