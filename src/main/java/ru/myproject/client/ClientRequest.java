@@ -1,11 +1,14 @@
 package ru.myproject.client;
 
-import ru.myproject.config.KafkaProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.streams.StreamsConfig;
+import ru.myproject.config.AppConfig;
+import ru.myproject.config.KafkaProperties;
+import ru.myproject.model.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,13 +18,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 public class ClientRequest {
-
-    private static final String USER_QUERY_TOPIC = "userQuery";
-    private static final String RESPONSE_TOPIC = "response";
-    private static final String RECOMMENDATIONS_TOPIC = "recommendations";
-    private static final String FILE_STORE = "./data/connector-output/products-final.json";
-    private static final long YEARS_LAST = 3;
 
     private static final ObjectMapper objectMapper = new ObjectMapper()
             .registerModule(new JavaTimeModule());
@@ -37,15 +35,15 @@ public class ClientRequest {
                     String productName = scanner.nextLine().trim();
 
                     if ("exit".equalsIgnoreCase(productName)) {
-                        System.out.println("Завершение работы...");
+                        log.debug("Завершение работы...");
                         break;
                     }
 
                     if (productName.isEmpty()) {
-                        System.err.println("Ошибка: название товара не может быть пустым");
+                        log.error("Ошибка: название товара не может быть пустым");
                         continue;
                     }
-                    List<Product> products = readProductsFromFile(FILE_STORE);
+                    List<Product> products = readProductsFromFile(AppConfig.getClientRequestFileStore());
 
                     Product foundProduct = findProductByName(products, productName);
 
@@ -53,27 +51,26 @@ public class ClientRequest {
                         logUserQuery(productName, foundProduct.getProductId());
                         sendProductResponse(foundProduct);
                         sendRecommendations(products, foundProduct);
-                        System.out.println("Товар найден: " + foundProduct.getName());
-                        System.out.println("ID товара: " + foundProduct.getProductId());
+                        log.debug("Товар найден: {}", foundProduct.getName());
+                        log.debug("ID товара: {}", foundProduct.getProductId());
                         Thread.sleep(500);
                     } else {
                         logUserQuery(productName, null);
-                        System.out.println("Товар с названием '" + productName + "' не найден");
+                        log.debug("Товар с названием '{}' не найден", productName);
                     }
 
                 } catch (Exception e) {
-                    System.err.println("Ошибка при обработке запроса: " + e.getMessage());
-                    e.printStackTrace();
+                    log.error("Ошибка при обработке запроса: {}", e.getMessage(), e);
                 }
             }
         } catch (Exception e) {
-            System.err.println("Критическая ошибка при запуске приложения: " + e.getMessage());
+            log.error("Критическая ошибка при запуске приложения: {}", e.getMessage(), e);
         } finally {
             if (kafkaProducer != null) {
                 kafkaProducer.close(); // :cite[3]
-                System.out.println("Kafka producer закрыт.");
+                log.debug("Kafka producer закрыт.");
             }
-            System.out.println("Сканнер закрыт.");
+            log.debug("Сканнер закрыт.");
         }
     }
 
@@ -93,8 +90,7 @@ public class ClientRequest {
                     Product product = parseProductFromString(line);
                     products.add(product);
                 } catch (Exception e) {
-                    System.err.println("Ошибка парсинга строки: " + line);
-                    e.printStackTrace();
+                    log.error("Ошибка парсинга строки: {}", line, e);
                 }
             }
         }
@@ -278,7 +274,8 @@ public class ClientRequest {
 
     private static void initializeKafkaProducer() {
         Properties props = KafkaProperties.getProducerConfig();
-        props.put(StreamsConfig.APPLICATION_ID_CONFIG, "product-filter-app");
+        props.put(StreamsConfig.APPLICATION_ID_CONFIG, 
+                AppConfig.getProperty("kafka.streams.application-id"));
         kafkaProducer = new KafkaProducer<>(props);
     }
 
@@ -298,13 +295,14 @@ public class ClientRequest {
         queryLog.put("query_type", "product_name_search");
 
         String queryJson = objectMapper.writeValueAsString(queryLog);
-        ProducerRecord<String, String> record = new ProducerRecord<>(USER_QUERY_TOPIC, queryJson);
+        String userQueryTopic = AppConfig.getKafkaTopicUserQuery();
+        ProducerRecord<String, String> record = new ProducerRecord<>(userQueryTopic, queryJson);
 
         kafkaProducer.send(record, (metadata, exception) -> {
             if (exception != null) {
-                System.err.println("Ошибка отправки запроса: " + exception.getMessage());
+                log.error("Ошибка отправки запроса: {}", exception.getMessage(), exception);
             } else {
-                System.out.println("Запрос записан в топик " + USER_QUERY_TOPIC);
+                log.debug("Запрос записан в топик {}", userQueryTopic);
             }
         });
     }
@@ -316,14 +314,15 @@ public class ClientRequest {
         responseData.put("category", product.getCategory());
 
         String responseJson = objectMapper.writeValueAsString(responseData);
+        String responseTopic = AppConfig.getKafkaTopicResponse();
         ProducerRecord<String, String> record =
-                new ProducerRecord<>(RESPONSE_TOPIC, product.getProductId(), responseJson);
+                new ProducerRecord<>(responseTopic, product.getProductId(), responseJson);
 
         kafkaProducer.send(record, (metadata, exception) -> {
             if (exception != null) {
-                System.err.println("Ошибка отправки ответа: " + exception.getMessage());
+                log.error("Ошибка отправки ответа: {}", exception.getMessage(), exception);
             } else {
-                System.out.println("Ответ отправлен в топик " + RESPONSE_TOPIC);
+                log.debug("Ответ отправлен в топик {}", responseTopic);
             }
         });
 
@@ -331,7 +330,7 @@ public class ClientRequest {
     }
 
     private static void sendRecommendations(List<Product> products, Product foundProduct) throws IOException {
-        LocalDateTime oneYearAgo = LocalDateTime.now().minus(YEARS_LAST, ChronoUnit.YEARS);
+        LocalDateTime oneYearAgo = LocalDateTime.now().minus(AppConfig.getClientRequestYearsLast(), ChronoUnit.YEARS);
 
         List<Product> recommendedProducts = products.stream()
                 .filter(p -> p.getBrand() != null && p.getBrand().equals(foundProduct.getBrand()))
@@ -348,17 +347,19 @@ public class ClientRequest {
             recommendationData.put("category", recommended.getCategory());
 
             String recommendationJson = objectMapper.writeValueAsString(recommendationData);
+            String recommendationsTopic = AppConfig.getKafkaTopicRecommendations();
             ProducerRecord<String, String> record =
-                    new ProducerRecord<>(RECOMMENDATIONS_TOPIC, recommended.getProductId(), recommendationJson);
+                    new ProducerRecord<>(recommendationsTopic, recommended.getProductId(), recommendationJson);
 
             kafkaProducer.send(record, (metadata, exception) -> {
                 if (exception != null) {
-                    System.err.println("Ошибка отправки ответа: " + exception.getMessage());
+                    log.error("Ошибка отправки ответа: {}", exception.getMessage(), exception);
                 }
             });
         }
-        System.out.println("Ответ отправлен в топик " + RECOMMENDATIONS_TOPIC);
+        String recommendationsTopic = AppConfig.getKafkaTopicRecommendations();
+        log.debug("Ответ отправлен в топик {}", recommendationsTopic);
         kafkaProducer.flush();
-        System.out.println("Найдено рекомендаций: " + recommendedProducts.size());
+        log.debug("Найдено рекомендаций: {}", recommendedProducts.size());
     }
 }

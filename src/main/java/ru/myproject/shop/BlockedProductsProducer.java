@@ -1,6 +1,8 @@
 package ru.myproject.shop;
 
+import ru.myproject.config.AppConfig;
 import ru.myproject.config.KafkaProperties;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 
@@ -10,10 +12,11 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 
+@Slf4j
 public class BlockedProductsProducer {
 
     public static void main(String[] args) {
-        String filePath = "data/blocked_products.txt";
+        String filePath = AppConfig.getFilePathBlockedProducts();
 
         Properties props = KafkaProperties.getProducerConfig();
 
@@ -27,21 +30,21 @@ public class BlockedProductsProducer {
                 if (!productId.isEmpty()) {
                     String jsonMessage = String.format("{\"product_id\": \"%s\"}", productId);
                     ProducerRecord<String, String> record =
-                            new ProducerRecord<>(KafkaProperties.TOPIC_BLOCKED_PRODUCTS, productId, jsonMessage);
+                            new ProducerRecord<>(KafkaProperties.TOPIC_BLOCKED_PRODUCTS(), productId, jsonMessage);
                     try {
                         producer.send(record).get(); // Ждем подтверждения
-                        System.out.println("Successfully sent blocked product: " + productId);
+                        log.debug("Successfully sent blocked product: {}", productId);
                     } catch (InterruptedException | ExecutionException e) {
-                        System.err.println("Error sending product " + productId + ": " + e.getMessage());
+                        log.error("Error sending product {}: {}", productId, e.getMessage(), e);
                     }
                 }
             }
 
             producer.flush();
-            System.out.println("All blocked products from file sent to Kafka topic: " + KafkaProperties.TOPIC_BLOCKED_PRODUCTS);
+            log.debug("All blocked products from file sent to Kafka topic: {}", KafkaProperties.TOPIC_BLOCKED_PRODUCTS());
 
         } catch (IOException e) {
-            System.err.println("Error reading file: " + e.getMessage());
+            log.error("Error reading file: {}", e.getMessage(), e);
         }
     }
 }

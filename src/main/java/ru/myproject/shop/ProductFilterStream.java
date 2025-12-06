@@ -1,8 +1,10 @@
 package ru.myproject.shop;
 
+import ru.myproject.config.AppConfig;
 import ru.myproject.config.KafkaProperties;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.Serdes;
@@ -20,12 +22,13 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
+@Slf4j
 public class ProductFilterStream {
     private static final ObjectMapper mapper = new ObjectMapper();
     private static final Set<String> blockedProductIds = new HashSet<>();
 
     public static void main(String[] args) {
-        sendJsonFileToKafka("data/products.json");
+        sendJsonFileToKafka(ru.myproject.config.AppConfig.getFilePathProducts());
         startStreamsProcessing();
     }
 
@@ -40,33 +43,33 @@ public class ProductFilterStream {
                     String productJson = product.toString();
                     String productId = product.get("product_id").asText();
                     ProducerRecord<String, String> record =
-                            new ProducerRecord<>(KafkaProperties.TOPIC_INPUT_JSON_STREAM, productId, productJson);
+                            new ProducerRecord<>(KafkaProperties.TOPIC_INPUT_JSON_STREAM(), productId, productJson);
 
                     producer.send(record, (metadata, exception) -> {
                         if (exception != null) {
-                            System.err.println("Error sending product " + productId + ": " + exception.getMessage());
+                            log.error("Error sending product {}: {}", productId, exception.getMessage(), exception);
                         } else {
-                            System.out.println("Product sent to Kafka: " + productId +
-                                    ", partition: " + metadata.partition() +
-                                    ", offset: " + metadata.offset());
+                            log.debug("Product sent to Kafka: {}, partition: {}, offset: {}",
+                                    productId, metadata.partition(), metadata.offset());
                         }
                     });
                 }
             }
             producer.flush();
-            System.out.println("All products from file sent to Kafka topic: " + KafkaProperties.TOPIC_INPUT_JSON_STREAM);
+            log.debug("All products from file sent to Kafka topic: {}", KafkaProperties.TOPIC_INPUT_JSON_STREAM());
 
         } catch (IOException e) {
-            System.err.println("Error reading file: " + e.getMessage());
+            log.error("Error reading file: {}", e.getMessage(), e);
         }
     }
 
     private static void startStreamsProcessing() {
         Properties props = KafkaProperties.getStreamsConfig();
-        props.put(StreamsConfig.APPLICATION_ID_CONFIG, "product-filter-app");
+        props.put(StreamsConfig.APPLICATION_ID_CONFIG, 
+                AppConfig.getProperty("kafka.streams.application-id"));
 
         StreamsBuilder builder = new StreamsBuilder();
-        builder.stream(KafkaProperties.TOPIC_BLOCKED_PRODUCTS,
+        builder.stream(KafkaProperties.TOPIC_BLOCKED_PRODUCTS(),
                         Consumed.with(Serdes.String(), Serdes.String()))
                 .foreach((key, value) -> {
                     try {
@@ -74,25 +77,24 @@ public class ProductFilterStream {
                             JsonNode blockedProduct = mapper.readTree(value);
                             String productId = blockedProduct.get("product_id").asText();
                             blockedProductIds.add(productId);
-                            System.out.println("Blocked product added: " + productId +
-                                    ", total blocked: " + blockedProductIds.size());
+                            log.debug("Blocked product added: {}, total blocked: {}", productId, blockedProductIds.size());
                         }
                     } catch (Exception e) {
-                        System.err.println("Error parsing blocked product JSON: " + e.getMessage());
+                        log.error("Error parsing blocked product JSON: {}", e.getMessage(), e);
                     }
                 });
-        builder.stream(KafkaProperties.TOPIC_INPUT_JSON_STREAM,
+        builder.stream(KafkaProperties.TOPIC_INPUT_JSON_STREAM(),
                         Consumed.with(Serdes.String(), Serdes.String()))
                 .filter((key, value) -> {
                     try {
                         if (value == null) {
-                            System.out.println("Skipping null value");
+                            log.debug("Skipping null value");
                             return false;
                         }
 
                         JsonNode product = mapper.readTree(value);
                         if (!product.has("product_id")) {
-                            System.out.println("Skipping product without product_id");
+                            log.debug("Skipping product without product_id");
                             return false;
                         }
 
@@ -100,18 +102,18 @@ public class ProductFilterStream {
                         boolean isBlocked = blockedProductIds.contains(productId);
 
                         if (!isBlocked) {
-                            System.out.println("Product allowed: " + productId);
+                            log.debug("Product allowed: {}", productId);
                             return true;
                         } else {
-                            System.out.println("Product blocked: " + productId);
+                            log.debug("Product blocked: {}", productId);
                             return false;
                         }
                     } catch (Exception e) {
-                        System.err.println("Error parsing product JSON: " + e.getMessage());
+                        log.error("Error parsing product JSON: {}", e.getMessage(), e);
                         return false;
                     }
                 })
-                .to(KafkaProperties.TOPIC_PRODUCTS, Produced.with(Serdes.String(), Serdes.String()));
+                .to(KafkaProperties.TOPIC_PRODUCTS(), Produced.with(Serdes.String(), Serdes.String()));
 
         KafkaStreams streams = new KafkaStreams(builder.build(), props);
 
@@ -120,19 +122,19 @@ public class ProductFilterStream {
         Runtime.getRuntime().addShutdownHook(new Thread("product-filter-shutdown-hook") {
             @Override
             public void run() {
-                System.out.println("Shutting down streams application...");
+                log.debug("Shutting down streams application...");
                 streams.close();
                 latch.countDown();
-                System.out.println("Streams application closed");
+                log.debug("Streams application closed");
             }
         });
 
         try {
             streams.start();
-            System.out.println("Streams application started");
+            log.debug("Streams application started");
             latch.await();
         } catch (final Throwable e) {
-            System.err.println("Error starting streams application: " + e.getMessage());
+            log.error("Error starting streams application: {}", e.getMessage(), e);
             System.exit(1);
         }
     }

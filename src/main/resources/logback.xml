@@ -20,7 +20,9 @@
   </appender>
 
   <!-- Уровни логирования -->
-  <root level="INFO">
+  <!-- Используем переменные окружения или system properties с значениями по умолчанию -->
+  <!-- Можно переопределить через переменные окружения LOGGING_LEVEL_ROOT и LOGGING_LEVEL_PACKAGE -->
+  <root level="${LOGGING_LEVEL_ROOT:-${logging.level.root:-DEBUG}}">
     <appender-ref ref="CONSOLE"/>
     <appender-ref ref="FILE"/>
   </root>
@@ -28,5 +30,5 @@
   <!-- Кастомные настройки для Kafka -->
   <logger name="org.apache.kafka" level="WARN"/>
   <logger name="org.springframework.kafka" level="WARN"/>
-  <logger name="your.package.name" level="DEBUG"/>
+  <logger name="ru.myproject" level="${LOGGING_LEVEL_PACKAGE:-${logging.level.ru.myproject:-DEBUG}}"/>
 </configuration>
